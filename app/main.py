@@ -5,6 +5,7 @@ import csv
 import hashlib
 import os
 import shutil
+from pathlib import Path
 
 import httpx
 from fastapi import Depends, FastAPI, Form, HTTPException, Request, status
@@ -56,10 +57,11 @@ async def lifespan(_: FastAPI):
     yield
 
 
-app = FastAPI(title="Compliance IQ", version="3.0.0", lifespan=lifespan)
+BASE_DIR = Path(__file__).resolve().parent
+app = FastAPI(title="Compliance IQ", version="3.1.0", lifespan=lifespan)
 app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET", "change-me-in-production"))
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
-templates = Jinja2Templates(directory="app/templates")
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 
 def seed_regulations() -> None:
@@ -110,6 +112,11 @@ def _write_audit(db: Session, actor_email: str, action: str, resource_type: str,
     )
 
 
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok", "service": "compliance-iq", "timestamp": datetime.utcnow().isoformat()}
 @app.get("/")
 def home_page(request: Request, db: Session = Depends(get_db)):
     user = _get_current_user(request, db)

@@ -66,3 +66,12 @@ def test_readiness_checklist_available():
     response = client.get("/readiness/checklist")
     assert response.status_code == 200
     assert "implemented" in response.json()
+<<<<<<< codex/build-compliance-tool-for-manufacturing-kbfyua
+
+
+def test_health_endpoint():
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+=======
+>>>>>>> main
