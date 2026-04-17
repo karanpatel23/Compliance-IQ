@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Compliance IQ · Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Manufacturing Compliance, Verified and Actionable.</h1>
+  <p>
+    Compliance IQ centralizes regulatory intelligence, expert review, facility assessments,
+    and audit-ready reporting so your teams can stay inspection-ready.
+  </p>
+  <div class="actions">
+    <a class="btn primary" href="/signup">Create account</a>
+    <a class="btn" href="/signin">Sign in</a>
+  </div>
+</section>
+
+<section class="grid">
+  <article class="card">
+    <h3>Verified Regulatory Engine</h3>
+    <p>OSHA, EPA, and FDA seed corpus with traceable source links and freshness checks.</p>
+  </article>
+  <article class="card">
+    <h3>Expert Review Workflow</h3>
+    <p>Rules stay inactive until expert-reviewed and approved by authorized reviewers.</p>
+  </article>
+  <article class="card">
+    <h3>Smart Assessments</h3>
+    <p>Automatically detect compliance gaps and prioritize remediation actions.</p>
+  </article>
+  <article class="card">
+    <h3>Audit-Ready Reports</h3>
+    <p>Export detailed CSV evidence trails for inspections and leadership reporting.</p>
+  </article>
+</section>
+
+<section class="details card">
+  <h2>Everything included in the tool</h2>
+  <ul>
+    <li>User authentication (sign up/sign in/sign out).</li>
+    <li>Dashboard with trust and activity metrics.</li>
+    <li>Facility profile management via API.</li>
+    <li>Regulation lifecycle: draft, review, approval/rejection.</li>
+    <li>Stale verification detection and trust gating.</li>
+    <li>Assessment execution with severity-aware findings.</li>
+    <li>CSV report export for auditors and managers.</li>
+    <li>Production-readiness checklist for rollout.</li>
+  </ul>
+</section>
+{% endblock %}
