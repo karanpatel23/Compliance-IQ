@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Sign Up · Compliance IQ{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <form class="card auth" method="post" action="/signup">
+    <h2>Create your workspace</h2>
+    <p>Start managing manufacturing compliance with verified intelligence.</p>
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+    <label>Full name
+      <input type="text" name="full_name" required />
+    </label>
+    <label>Business email
+      <input type="email" name="email" required />
+    </label>
+    <label>Company
+      <input type="text" name="company_name" required />
+    </label>
+    <label>Role
+      <input type="text" name="role" value="Compliance Manager" required />
+    </label>
+    <label>Password
+      <input type="password" name="password" minlength="8" required />
+    </label>
+    <button class="btn primary" type="submit">Create account</button>
+    <p class="muted">Already registered? <a href="/signin">Sign in</a>.</p>
+  </form>
+</div>
+{% endblock %}

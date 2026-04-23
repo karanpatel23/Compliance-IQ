@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+.venv/
+compliance_iq.db
+.pytest_cache/

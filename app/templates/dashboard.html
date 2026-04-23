@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Compliance IQ{% endblock %}
+{% block content %}
+<section class="hero compact">
+  <h1>Hello {{ user.full_name }} 👋</h1>
+  <p>{{ user.company_name }} · Role: <strong>{{ user.role }}</strong></p>
+</section>
+
+<section class="grid metrics">
+  <article class="card metric"><h3>Facilities</h3><p>{{ facilities_count }}</p></article>
+  <article class="card metric"><h3>Trusted Regulations</h3><p>{{ trusted_count }}</p></article>
+  <article class="card metric"><h3>Stale Regulations</h3><p>{{ stale_count }}</p></article>
+  <article class="card metric"><h3>Assessments</h3><p>{{ assessments_count }}</p></article>
+  <article class="card metric"><h3>Open Remediations</h3><p>{{ open_remediations }}</p></article>
+</section>
+
+<section class="card">
+  <h2>Latest Assessments</h2>
+  {% if latest_assessments %}
+  <table>
+    <thead><tr><th>ID</th><th>Facility ID</th><th>Score</th><th>Created</th></tr></thead>
+    <tbody>
+      {% for item in latest_assessments %}
+      <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.facility_id }}</td>
+        <td>{{ item.overall_score }}%</td>
+        <td>{{ item.created_at }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No assessments yet. Go to <a href="/tool">Tool</a> and run your first one.</p>
+  {% endif %}
+</section>
+{% endblock %}
