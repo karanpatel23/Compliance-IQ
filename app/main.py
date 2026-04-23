@@ -47,7 +47,7 @@ from .schemas import (
 from .security import decrypt_text, encrypt_text
 
 VERIFICATION_MAX_AGE_DAYS = 365
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 
 @asynccontextmanager

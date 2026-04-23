@@ -2,17 +2,21 @@
 
 Compliance IQ is a production-oriented compliance platform built with **FastAPI** (ASGI), SQLAlchemy, Jinja templates, and static assets.
 
-> **Entrypoint inspection result:** this repository does **not** contain a Flask app object. The correct production entrypoint is `app.main:app` (FastAPI ASGI app).
+> **Entrypoint inspection result:** there is no Flask app in this repo. The correct deploy entrypoint is `app.main:app`.
 
-## Key production features
+## Why Render dependency install failed (root cause)
 
-- Session auth + SSO bridge (`/sso/login`)
-- RBAC (`admin`, `compliance_manager`, `auditor`, `reviewer`)
-- Compliance assessments and CSV export
-- Regulation freshness and sync checks
-- Remediation tasks + SLA breach view
-- Audit logs, encrypted remediation evidence, backup operation endpoint
-- Health endpoint: `GET /health`
+Your failure (`maturin`, `cargo`, read-only `/usr/local/cargo`) is caused when pip cannot find a compatible wheel and falls back to building Rust-backed dependencies from source.
+
+In this repo, the main Rust-triggering risk was:
+
+- `passlib[bcrypt]` → pulls `bcrypt` (Rust-backed build path via `maturin` when no wheel is available for the runtime).
+
+To make Render installs reliable, this repo now:
+
+1. Removes `passlib[bcrypt]` extra and uses `passlib` with `pbkdf2_sha256` only.
+2. Pins Python to **3.11.11** (`render.yaml` + `runtime.txt`) for broad wheel compatibility.
+3. Keeps `app.main:app` with Gunicorn+Uvicorn worker for ASGI production startup.
 
 ## Local run
 
@@ -26,19 +30,16 @@ uvicorn app.main:app --reload
 
 ## Render deployment (step-by-step)
 
-### 1) Push this repo to GitHub
+### 1) Push to GitHub
 
-Commit and push your branch to a GitHub repository.
+Push this branch to your GitHub repo.
 
-### 2) Create a new Web Service on Render
+### 2) Create Render Web Service
 
 - Render Dashboard → **New** → **Web Service**
-- Connect your GitHub repo
-- Branch: choose your deployment branch
+- Connect repo + branch
 
-### 3) Configure build/start commands
-
-Use exactly:
+### 3) Use these commands
 
 - **Build Command**
   ```bash
@@ -49,14 +50,14 @@ Use exactly:
   gunicorn -k uvicorn.workers.UvicornWorker -w 2 -b 0.0.0.0:$PORT app.main:app
   ```
 
-These are also captured in `render.yaml` and `Procfile`.
+(Also present in `render.yaml` and `Procfile`.)
 
-### 4) Set required environment variables
+### 4) Set environment variables
 
-From `.env.example`, set at least:
+Required:
 
-- `SESSION_SECRET` (strong random value)
-- `APP_ENCRYPTION_KEY` (base64-url-safe 32-byte key)
+- `SESSION_SECRET`
+- `APP_ENCRYPTION_KEY`
 - `DATABASE_URL` (Render Postgres recommended)
 
 Optional:
@@ -64,36 +65,18 @@ Optional:
 - `BACKUP_SOURCE_FILE`
 - `BACKUP_DIR`
 
-### 5) Database recommendation for production
+### 5) Deploy and verify
 
-Use **Render Postgres** and set `DATABASE_URL` to the Postgres connection string.
-Do not rely on local sqlite file persistence for production web instances.
+- Deploy in Render
+- Open: `https://<your-service>.onrender.com/health`
+- Expected JSON contains `"status": "ok"`
 
-### 6) Deploy
-
-Click **Create Web Service**. Render will:
-
-1. run build command,
-2. run start command,
-3. provide a live URL.
-
-### 7) Verify health
-
-Open:
-
-- `https://<your-render-service>.onrender.com/health`
-
-Expected:
-
-```json
-{"status":"ok", ...}
-```
-
-## Files added for deployment
+## Production files
 
 - `render.yaml`
 - `Procfile`
 - `.env.example`
+- `runtime.txt`
 
 ## Runtime validation in this environment
 
